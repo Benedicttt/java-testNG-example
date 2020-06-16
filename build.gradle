@@ -1,6 +1,44 @@
-apply plugin: 'java'
+buildscript {
+    repositories { jcenter() }
 
-sourceCompatibility = '1.8'
+    dependencies {
+        classpath 'org.jfrog.buildinfo:build-info-extractor-gradle:4.4.0'
+        classpath 'ru.alfalab.gradle:cucumber-reporting-gradle-plugin:0.1.0'
+        classpath 'ru.alfalab.gradle:cucumber-parallel-test-gradle-plugin:0.3.1'
+        classpath "io.qameta.allure:allure-gradle:2.8.1"
+    }
+}
+
+apply plugin: 'java'
+apply plugin: 'ru.alfalab.cucumber-parallel-test'
+apply plugin: 'ru.alfalab.cucumber-reporting'
+apply plugin: 'io.qameta.allure'
+apply plugin: 'com.jfrog.artifactory'
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+allure {
+    version = '2.13.2'
+    aspectjweaver = true
+    reportDir = file('allure-report')
+    useCucumberJVM {
+        version = '2.13.2'
+    }
+}
+
+description = 'java-akita-example'
+
+generateRunner.glue = ['steps']
+generateRunner.format = ["io.qameta.allure.cucumber2jvm.AllureCucumber2Jvm"]
+
+compileJava.options.encoding = 'UTF-8'
+compileTestJava.options.encoding = 'UTF-8'
+
+compileJava.sourceCompatibility = '1.8'
+compileTestJava.sourceCompatibility = '1.8'
+compileJava.targetCompatibility = '1.8'
+compileTestJava.targetCompatibility = '1.8'
 
 repositories {
     mavenCentral()
@@ -11,44 +49,6 @@ project.ext {
 }
 
 project.version = '1.0.0'
-
-
-// Exclude cucumber tests below when running test, build tasks.
-test {
-    exclude '/test/'
-}
-
-// Cucumber tasks.
-configurations {
-    cucumber
-    cucumberRuntime {
-        extendsFrom testImplementation
-    }
-}
-
-ext.RunFeature = { String definition, String feature ->
-    javaexec {
-        main = "cucumber.api.cli.Main"
-        classpath = configurations.cucumberRuntime + sourceSets.main.output + sourceSets.test.output
-        args = ['--format', 'html:cucumber-html-report',
-                '--plugin', 'pretty',
-                '--glue',
-                definition,
-                feature,
-                '--tags', '@ui'
-        ]
-    }
-}
-
-// Configure your feature to run from here.
-project.tasks.create('cucumber') {
-    dependsOn assemble, compileTestJava
-
-    doLast {
-        //This line run tests
-        RunFeature('steps', 'src/test/resources')
-    }
-}
 
 dependencies {
     compile group: 'info.cukes', name: 'cucumber-java', version: '1.2.5', ext: 'pom'
@@ -62,5 +62,51 @@ dependencies {
     testCompile 'junit:junit:4.12'
     testCompile 'com.codeborne:selenide:5.12.2'
 
-    cucumber 'info.cukes:cucumber-java:1.2.5'
+    compile group: 'io.qameta.allure', name: 'allure-cucumber2-jvm', version: '2.13.2'
+    compile group: 'io.qameta.allure', name: 'allure-commandline', version: '2.13.2', ext: 'zip'
+}
+
+test {
+    maxParallelForks = 4
+    ignoreFailures = true
+
+    systemProperty "profile", findProperty("profile")
+    systemProperty "local", findProperty("local")
+    systemProperty "cucumber.options", findProperty("cucumber.options")
+
+    jvmArgs += "-Dprofile=${profile}"
+    jvmArgs += '-Dselenide.pageLoadStrategy=none'
+    jvmArgs += '-Dselenide.browser=ru.alfabank.tests.core.drivers.CustomDriverProvider'
+    jvmArgs += '-Dgalen.browser.screenshots.fullPage=true'
+    jvmArgs += '-Dgalen.browser.screenshots.fullPage.scrollWait=50'
+    jvmArgs += '-Dlog4j.configurationFile=src/main/resources/log4j2.xml'
+
+    if (tag) {
+        jvmArgs += "-Dcucumber.options=--tags ${tag}"
+    }
+    if (browser) {
+        jvmArgs += "-Dbrowser=${browser}"
+    }
+    if (remoteUrl) {
+        jvmArgs += "-DremoteUrl=${remoteUrl}"
+    }
+    if (browserVersion) {
+        jvmArgs += "-DbrowserVersion=${browserVersion}"
+    }
+    if (width && height) {
+        jvmArgs += "-Dselenide.browserSize=${width}x${height}"
+    }
+    if (maximized) {
+        jvmArgs += "-Dselenide.startMaximized=${maximized}"
+    }
+
+    reports {
+        html.enabled = false
+        junitXml.enabled = false
+    }
+}
+
+task rpPublish(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    main = project.hasProperty('mainClass') ? project.getProperty('mainClass') : 'utils.ReportPortalUtil'
 }

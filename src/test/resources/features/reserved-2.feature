@@ -2,7 +2,7 @@
 # language: en
 
 @ui
-Feature: Test page https://www.iana.org/domains/reserved
+Feature: Test 2: page https://www.iana.org/domains/reserved
   Scenario: Checking all blocks from page
     Given open page https://www.iana.org/domains/reserved
     When I see title IANA — IANA-managed Reserved Domains
