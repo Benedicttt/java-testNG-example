@@ -1,5 +1,6 @@
 #language: en
 Feature: Test 2: page https://www.iana.org/domains/reserved
+  @ui
   Scenario: Checking all blocks from page
     Given opened page "https://www.iana.org/domains/reserved"
     Then block "Pages" has been loaded

@@ -64,6 +64,8 @@ dependencies {
     testCompile 'junit:junit:4.12'
     testCompile 'com.codeborne:selenide:5.12.2'
 
+    compile group: 'com.jayway.restassured', name: 'json-schema-validator', version: '2.9.0'
+
     compile group: 'io.qameta.allure', name: 'allure-cucumber2-jvm', version: '2.13.2'
     compile group: 'io.qameta.allure', name: 'allure-commandline', version: '2.13.2', ext: 'zip'
 }
