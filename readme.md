@@ -3,9 +3,9 @@
 *****
 **Run command:**
 
-  gradle(w) clean test
+$ gradle(w) clean test
   
-  gradle(w) clean cucumber
+$ gradle(w) clean cucumber
   
   
 *****
