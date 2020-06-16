@@ -1,15 +1,17 @@
-###### **Java-Selenide example by Sergey Kievskiy**
+###### **Java-Akita example by Sergey Kievskiy**
 
 *****
 **Run command:**
 
-$ gradle(w) clean test
+`$ gradle(w) clean test` 
+_running tests parallels_
   
-$ gradle(w) clean cucumber
-  
+`$ gradle clean generateCucumberReport -i` running tests parallels and generate cucumber report
+
+`$ allure serve build/allure-results` generate allure report  
   
 *****
 **Recommended:**
-* Java 1.8+
-* Gradle 2.7+
+* Java 1.8
+* Gradle 4+
   
