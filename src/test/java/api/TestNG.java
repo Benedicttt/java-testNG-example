@@ -1,21 +1,26 @@
 package api;
 
-import core.BaseDriver;
-import core.BaseMethods;
+import helpers.Request;
+import io.restassured.response.Response;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 
 import java.io.IOException;
 
-import static com.codeborne.selenide.Selenide.open;
-import static core.BaseMethods.baseUrl;
-import static core.BaseMethods.currentUrl;
-import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.*;
 
-public class TestNG extends BaseDriver implements BaseMethods {
-//    @Test
-//    public void openingPage() throws IOException {
-//        open(baseUrl());
-//
-//        assertEquals(currentUrl(), baseUrl());
-//    }
+public class TestNG {
+    private Response response;
+
+    @BeforeClass
+    @Parameters("baseUrlAPI")
+    public void response(String baseUrlAPI) throws IOException {
+        response = Request.call(baseUrlAPI, null);
+    }
+
+    @Test
+    public void statusCode() {
+        assertEquals(response.statusCode(), 200);
+    }
 }

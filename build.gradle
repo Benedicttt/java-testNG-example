@@ -1,5 +1,15 @@
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath "io.qameta.allure:allure-gradle:2.3"
+    }
+}
+
 apply plugin: 'java'
 apply plugin: 'application'
+apply plugin: 'io.qameta.allure'
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
@@ -10,11 +20,17 @@ repositories {
 }
 
 dependencies {
-    compile(group: 'io.rest-assured', name: 'rest-assured', version: '4.2.0')
+    compile group: 'io.rest-assured', name: 'rest-assured', version: '4.2.0'
     compile group: 'com.jayway.restassured', name: 'json-schema-validator', version: '2.9.0'
+    compile group: 'io.qameta.allure', name: 'allure-testng', version: '2.13.3'
 
     testCompile group: 'org.testng', name: 'testng', version: '7.1.0'
     testCompile 'com.codeborne:selenide:5.12.2'
+}
+
+allure {
+    autoconfigure = true
+    version = '2.4.1'
 }
 
 test {

@@ -34,8 +34,7 @@ public class Request {
         Response response = request.header("", "")
                 .spec(spec)
                 .with()
-                .body(nameParams).when()
-                .post(namePath).thenReturn();
+                .get(namePath).thenReturn();
 
         return response;
     }
