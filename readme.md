@@ -1,4 +1,4 @@
-###### **Java-Akita example by Sergey Kievskiy**
+###### **Java-TestNG example by Sergey Kievskiy**
 
 *****
 **Run command:**
