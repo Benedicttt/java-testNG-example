@@ -1,5 +1,6 @@
 .allure/
 build
+build/allure-results
 ./build
 logs
 ./logs
